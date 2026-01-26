@@ -36,7 +36,7 @@ able to create a static binary by doing something like this:
 
 clang -nostdlib -nostdinc -static \
    -I /your/musl/include -o onenetd \
-   onenetd.c /your/musl/lib/crt1.0 /your/musl/lib/libc.a
+   onenetd.c /your/musl/lib/crt1.o /your/musl/lib/libc.a
 strip onenetd
 
 If you are doing musl-flavoured static liking on ARM, you may need
