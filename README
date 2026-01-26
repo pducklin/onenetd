@@ -1,0 +1,44 @@
+ABOUT
+
+onenetd
+Adam Sampson <ats@offog.org>
+
+Tweaked from 1.11 to 1.11c, where 'c' stands for CONNCOUNT.
+See 'CONNCOUNT' in the code and the man page to explain.
+Paul Ducklin <pducklin@outlook.com>
+
+
+DESCRIPTION
+
+onenetd is a single-port inetd. Invoke it as "onenetd -h" for options,
+or see the included manual page.
+
+
+BUILDING
+
+To build, 'clang -O2 -o onenetd onenetd.c' on most Unix-flavoured OSes
+should do the trick. You can 'strip onenetd' afterwards if you wish. 
+That's it. If you prefer the GNU compiler, use 'gcc' instead of 'clang'.
+
+To install, if that is not too dramatic a word for it, put onenetd 
+somewhere in your path, and onenetd.1 somewhere in your manpath. 
+
+This code used to have ./configure and heaps of autoconf stuff that
+has been ripped out in favour of the build 'instruction' above ;-)
+
+
+STATIC BUILDS ON GLIBC LINUXEN
+
+If you are using a glibc-style Linux but have a directory tree with
+musl's include files and crt1.0 and libc.a library files available
+(e.g. extracted from a chrooted Alpine Linux tree), you should be 
+able to create a static binary by doing something like this:
+
+clang -nostdlib -nostdinc -static \
+   -I /your/musl/include -o onenetd \
+   onenetd.c /your/musl/lib/crt1.0 /your/musl/lib/libc.a
+strip onenetd
+
+If you are doing musl-flavoured static liking on ARM, you may need
+to add (somewhat contradictorily :-) '-lgcc' to provide some needed
+floating point library code without which linking will fail.
