@@ -1,4 +1,4 @@
-.TH onenetd 1 "7th March 2005" "Version 1.11" "Network Tools"
+.TH onenetd 1 "2026-01-31" "Version 1.11c" "Network Tools"
 .SH NAME
 onenetd \- listen on a TCP port and launch a program to handle requests
 .SH SYNOPSIS
@@ -8,10 +8,12 @@ onenetd binds a TCP socket to port PORT on IP address ADDRESS, listens for and
 accepts connections, and spawns COMMAND with stdin and stdout (and optionally
 stderr) connected to the accepted socket.
 .PP
-onenetd may be thought of as a minimal version of inetd, suitable only for
-listening for "stream tcp nowait" services on a single port. The idea is that
-multiple copies of onenetd will be run, one for each service. The advantages of
-onenetd over inetd include:
+onenetd works like a minimal version of inetd that listens for
+ "stream tcp nowait" services on a single port. If you need
+to listen on mutiple ports, just run multiple copies of onenetd, 
+one for each service.
+.PP
+The advantages of onenetd over inetd include:
 .IP \(bu
 Connections may be refused with a fixed response after the connection limit is
 reached.
@@ -24,22 +26,22 @@ port for different interface addresses.
 .IP \(bu
 Incoming connections may be logged to stderr.
 .PP
-Note that onenetd only handles TCP connections; it is not possible to run UDP
-services (such as nmbd) from onenetd.
+Note that onenetd only handles TCP connections, so you can't run UDP
+services such as nmbd.
 .SH OPTIONS
 .TP
 .B ADDRESS
 The hostname or IP address to bind() to. Specify 0 to bind to all addresses.
 .TP
 .B PORT
-The service name or port number to bind() to. In order to bind to a privileged
-port, onenetd must be initially run as root (although you can use the -u etc.
-options to switch to another user after the bind has been done).
+The service name or port number to bind() to. If you need to run onenetd as root
+to bind to a privileged port, you can use the options -u/-g or -U to switch uid
+and gid after bind()ing.
 .TP
 .B COMMAND ...
 The command to execute, as well as its parameters (all parameters given to
 onenetd after COMMAND are passed to COMMAND as parameters). argv[0] for COMMAND
-will be set to COMMAND; if you wish to specify a different argv[0], use the
+will be set to COMMAND; if you need to specify a different argv[0], use the
 argv0 tool from the freedt or daemontools packages.
 .TP
 .B \-c N
@@ -98,7 +100,7 @@ arguments). Since onenetd is intended to run forever, the exit code is
 generally not important, and stderr should be examined for diagnostic messages
 if it exits unexpectedly.
 .SH ENVIRONMENT VARIABLES
-onenetd sets several variables in the child process's environment; these can be
+onenetd sets several variables in the child process's environment. These can be
 used for logging or access control.
 .TP
 .B TCPLOCALIP

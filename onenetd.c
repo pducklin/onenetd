@@ -2,7 +2,9 @@
    onenetd: a single-process inetd equivalent
    Copyright 2001, 2002, 2003, 2005 Adam Sampson <ats@offog.org>
 
-   Please report bugs to ats@offog.org.
+   Tweaked from 1.11 to 1.11c, where 'c' stands for CONNCOUNT.
+   See 'CONNCOUNT' in the code and the man page to explain.
+   Paul Ducklin <pducklin@outlook.com>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the
@@ -39,7 +41,8 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 #include <stdio.h>
-#include "config.h"
+
+#define VERSION "1.11c"
 
 int max_conns = 40;
 int conn_count = 0;
@@ -123,7 +126,7 @@ void usage(int code) {
 		"  -c N     limit to at most N children running (default 40).\n"
 		"           Further connections will be deferred unless -r\n"
 		"           is specified.\n"
-                "  -n num   set starting CONNCOUNT to num (default 0).\n"
+		"  -n num   set starting CONNCOUNT to num (default 0).\n"
 		"  -g gid   setgid(gid) after binding\n"
 		"  -u uid   setuid(uid) after binding\n"
 		"  -U       setuid($UID) and setgid($GID) after binding\n"
@@ -363,10 +366,11 @@ int main(int argc, char **argv) {
 				if (n <= 0) break;
 
 				conn_count--;
-				if (verbose)
-                                        fprintf(stderr, "        (%2d/%2d) "
-                                                        "pid %d closed\n",
-                                                conn_count,max_conns,n);
+				if (verbose) {
+					fprintf(stderr, "        (%2d/%2d) "
+						"pid %d closed\n",
+						conn_count,max_conns,n);
+				}
 			}
 		}
 
@@ -467,8 +471,8 @@ int main(int argc, char **argv) {
 					dup2(child_fd, 2);
 
 				putenv(strdup("PROTO=TCP"));
-                                snprintf(buf, sizeof buf, "CONNCOUNT=%d",
-                                        conn_total);
+				snprintf(buf, sizeof buf, "CONNCOUNT=%d",
+					conn_total);
 				putenv(strdup(buf));
 				snprintf(buf, sizeof buf, "TCPLOCALIP=%s",
 					inet_ntoa(local_addr.sin_addr));
@@ -488,13 +492,14 @@ int main(int argc, char **argv) {
 			}
 
 			conn_count++;
-			if (verbose)
-                                fprintf(stderr, "%06d: (%2d/%2d) "
-                                                "pid %d from %s:%d\n",
-                                        conn_total,conn_count, max_conns,
-                                        pid, inet_ntoa(child_addr.sin_addr),
-                                        ntohs(child_addr.sin_port) );
-                        conn_total++;
+			if (verbose) {
+				fprintf(stderr, "%06d: (%2d/%2d) "
+					"pid %d from %s:%d\n",
+					conn_total,conn_count, max_conns,
+					pid, inet_ntoa(child_addr.sin_addr),
+					ntohs(child_addr.sin_port) );
+			}
+			conn_total++;
 
 			no_conn:
 			if (child_fd >= 0)
