@@ -1,4 +1,4 @@
-**`onenetd`** is single-source-file utility that acts as a one-port `inetd`. 
+**onenetd** is single-source-file utility that acts as a one-port `inetd`. 
 
 Listens on a TCP port, accepts connections, and hooks them up to `stdin`/`stdout` 
 (and optionally also `stderr`) of a program or script of your choice, just like
